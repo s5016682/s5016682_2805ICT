@@ -29,6 +29,7 @@ public class MinesweeperMenu extends JPanel{
     minesweep = new JFrame("Minesweeper");
     minesweep.getContentPane().add(new MinesweeperMenu());
     minesweep.pack();
+    minesweep.setResizable(false);
     minesweep.setVisible(true);
   }
   
@@ -43,6 +44,7 @@ public class MinesweeperMenu extends JPanel{
       gameSelectMenu = new JFrame("GameOptions");
       gameSelectMenu.getContentPane().add(new GameSelect());
       gameSelectMenu.pack();
+      gameSelectMenu.setResizable(false);
       gameSelectMenu.setVisible(true);
       minesweep.setVisible(false);
     }
@@ -85,11 +87,11 @@ public class MinesweeperMenu extends JPanel{
       
       add(diff);
       add(easy);
-      //add(medium);
-      //add(hard);
+      add(medium);
+      add(hard);
       add(mode);
       add(square);
-      //add(hex);
+      add(hex);
       add(start);
       add(back);
       easy.setSelected(true);
@@ -98,7 +100,15 @@ public class MinesweeperMenu extends JPanel{
     
     private class StartGame implements ActionListener{
       public void actionPerformed(ActionEvent e){
-        //!!!
+        int boardSize = 8;
+        int numMines = 10;
+        int gameType = 4;
+        JFrame game = new JFrame("Minesweeper");
+        Minesweeper ex = new Minesweeper(boardSize, numMines, gameType);
+        game.add(ex);
+        game.setVisible(true);
+        game.setSize(20*boardSize, 20*boardSize);
+        game.setResizable(false);
       }
     }
     

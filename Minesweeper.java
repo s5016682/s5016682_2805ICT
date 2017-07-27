@@ -24,6 +24,8 @@ public class Minesweeper extends JPanel{
   private int[] field;
   private int mines_left;
   private Image[] img;
+  private boolean inGame;
+  private boolean lose;
 
   Minesweeper(int bs, int nm, int gt){
     super();
@@ -55,6 +57,8 @@ public class Minesweeper extends JPanel{
     int i = 0;
     int position = 0;
     int cell = 0;
+    inGame = true;
+    lose = true;
     random = new Random();
     mines_left = numMines;
     field = new int[numCells];
@@ -65,9 +69,68 @@ public class Minesweeper extends JPanel{
       position = (int) (numCells * random.nextDouble());
       if ((position < numCells) && (field[position] != coverMineCell)) {
           field[position] = coverMineCell;
+          int[] temp = adjacentCells(position);
+          for (int x = 0; x < temp.length; x++){
+            if (field[temp[x]] != coverMineCell){
+              field[temp[x]] += 1;
+            }
+          }
           i++;
       }
     }
+  }
+  
+  private int[] adjacentCells(int pos){
+    int inCol = (int) pos / numRows;
+    int inRow = (int) pos % numRows;
+    int i = 0;
+    int tempPos[] = new int[8];
+    if (gridType == 4){
+      boolean top = inCol > 0;
+      boolean bottom = inCol < numCols - 1;
+      boolean left = inRow > 0;
+      boolean right = inRow < numRows - 1;
+      if (top){
+        tempPos[i] = pos - numRows;
+        i++;
+        if (left){
+          tempPos[i] = pos - numRows - 1;
+          i++;
+        }
+        if (right){
+          tempPos[i] = pos - numRows + 1;
+          i++;
+        }
+      }
+      if (bottom){
+        tempPos[i] = pos + numRows;
+        i++;
+        if (left){
+          tempPos[i] = pos + numRows - 1;
+          i++;
+        }
+        if (right){
+          tempPos[i] = pos + numRows + 1;
+          i++;
+        }
+      }
+      if (left){
+        tempPos[i] = pos - 1;
+        i++;
+      }
+      if (right){
+        tempPos[i] = pos + 1;
+        i++;
+      } 
+    } else if (gridType == 6){
+    
+    }
+    int r[] = new int[i];
+    for (int x = 0; x < i ; x++){
+      r[x] = tempPos[x];
+      System.out.println("Row:" + inRow + ",Col:" + inCol + ",nAdj:" + i + ",x:" + tempPos[x]);
+    }
+    return r;
   }
   
   @Override
@@ -108,7 +171,43 @@ public class Minesweeper extends JPanel{
     public void mousePressed(MouseEvent e) {
       int x = e.getX();
       int y = e.getY();
-      
+      int cCol = x / cellSize;
+      int cRow = y / cellSize;
+      boolean rep = false;
+      if (!inGame) {
+        //newGame();
+        //repaint();
+      }
+      if ((x < numCols * cellSize) && (y < numRows * cellSize)) {
+        if (e.getButton() == MouseEvent.BUTTON3) {
+          if (field[(cRow * numCols) + cCol] > mineCell) {
+            rep = true;
+            if (field[(cRow * numCols) + cCol] <= coverMineCell) {
+                field[(cRow * numCols) + cCol] += markCell;
+            } else {
+              field[(cRow * numCols) + cCol] -= markCell;
+            }
+          }
+        } else {
+          if (field[(cRow * numCols) + cCol] > coverMineCell) {
+            return;
+          }
+          if ((field[(cRow * numCols) + cCol] > mineCell) &&
+              (field[(cRow * numCols) + cCol] < markMineCell)) {
+            field[(cRow * numCols) + cCol] -= coverCell;
+            rep = true;
+            if (field[(cRow * numCols) + cCol] == mineCell){
+                inGame = false;
+            }
+            if (field[(cRow * numCols) + cCol] == emptyCell){
+              //find_empty_cells((cRow * numCols) + cCol);
+            }
+          }
+        }
+        if (rep){
+          repaint();
+        }
+      }
     }
   }
 }
