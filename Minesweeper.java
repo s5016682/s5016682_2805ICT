@@ -22,7 +22,7 @@ public class Minesweeper extends JPanel{
   private final int drawWrongMark = 12;
   
   private int[] field;
-  private int mines_left;
+  private int mines_left, numMarks;
   private Image[] img;
   private boolean inGame;
   private boolean lose;
@@ -174,18 +174,18 @@ public class Minesweeper extends JPanel{
       int cCol = x / cellSize;
       int cRow = y / cellSize;
       boolean rep = false;
-      if (!inGame) {
-        //newGame();
-        //repaint();
-      }
       if ((x < numCols * cellSize) && (y < numRows * cellSize)) {
         if (e.getButton() == MouseEvent.BUTTON3) {
           if (field[(cRow * numCols) + cCol] > mineCell) {
             rep = true;
             if (field[(cRow * numCols) + cCol] <= coverMineCell) {
+              if (numMarks < numMines){  
                 field[(cRow * numCols) + cCol] += markCell;
+                numMarks++;
+              }
             } else {
               field[(cRow * numCols) + cCol] -= markCell;
+              numMarks--;
             }
           }
         } else {
